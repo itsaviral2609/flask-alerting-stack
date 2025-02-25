@@ -1,6 +1,6 @@
 global:
-  slack_api_url: 'https://hooks.slack.com/services/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'
-  pagerduty_url: 'https://events.pagerduty.com/generic/2010-04-15/create_event.json'
+  slack_api_url: 'https://hooks.slack.com/services/TCA6MEJHW/*************************'
+  pagerduty_url: 'https://events.pagerduty.com/generic/*******************************'
 
 route:
   receiver: 'pagerduty-notifications'
