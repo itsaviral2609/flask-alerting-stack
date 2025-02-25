@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s  # Default scrape interval for all jobs
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+
+  - job_name: 'flask_app'
+    scrape_interval: 5s   # Custom scrape interval for this job
+    metrics_path: '/metrics'  # Path to scrape metrics from
+    static_configs:
+      - targets: ['flask-app:5000']  # Flask app metrics target
+    scheme: http
+
+  - job_name: "node"
+    static_configs:
+      - targets: ['node_exporter:9100']
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - 'alertmanager:9093'     
+
+rule_files:
+ - "rules/*.yml"

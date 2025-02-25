@@ -1,0 +1,25 @@
+groups:
+- name: cpu_alerts
+  rules:
+  - alert: HighCPUUsage
+    expr: 100 * (1 - avg by(instance) (rate(process_cpu_seconds_total[1m]))) > 30
+    for: 1m
+    labels:
+      severity: "High"
+      team: "slack-notifications"
+    annotations:
+      value: "{{ $value }}"
+      description: "CPU Usage has exceeded 30% threshold"
+
+  - alert: CriticalCPUUsage
+    expr: 100 * (1 - avg by(instance) (rate(process_cpu_seconds_total[1m]))) > 50
+    for: 2m
+    labels:
+      severity: "Critical"
+      team: "pagerduty"
+    annotations:
+      value: "{{ $value }}"
+      description: "CPU Usage has exceeded critical 50% threshold"
+
+
+

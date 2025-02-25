@@ -1,0 +1,73 @@
+version: '3.8'
+
+networks:
+  flask-monitoring:
+    driver: bridge
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - /home/aviral/flask-app-prom/prometheus/alertmanager/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /home/aviral/flask-app-prom/prometheus/targets:/etc/prometheus/targets/
+      - /home/aviral/flask-app-prom/prometheus/rules/:/etc/prometheus/rules/
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - flask-monitoring
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    volumes:
+      -  /home/aviral/flask-app-prom/prometheus/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    ports:
+      - "9093:9093"
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+    restart: unless-stopped
+    networks:
+      - flask-monitoring    
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
+    networks:
+      - flask-monitoring
+
+  grafana:
+    image: grafana/grafana-enterprise:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana.ini:/etc/grafana/grafana.ini
+    networks:
+      - flask-monitoring
+
+  flask-app:
+    build: .
+    container_name: flask-app
+    ports:
+      - "5000:5000"
+    environment:
+      - PROMETHEUS_HEX=${PROMETHEUS_HEX}  
+    restart: unless-stopped
+    networks:
+      - flask-monitoring
+
+volumes:
+  grafana-storage:
