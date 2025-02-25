@@ -5,6 +5,9 @@ This project integrates **Flask**, **Prometheus**, **Grafana**, **Slack**, and *
 
 ---
 
+![Screenshot from 2025-02-25 16-41-21](https://github.com/user-attachments/assets/d8fd18b2-8ae2-4189-8bb6-bdfd18d97abb)
+
+
 ## Features
 - **Flask Application Metrics Exposure** (via `/metrics` endpoint)
 - **Prometheus Monitoring & Alerting**
